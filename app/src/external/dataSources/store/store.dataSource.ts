@@ -1,14 +1,13 @@
 import {
   StoreDataSourceDTO,
   TotemDataSourceDTO,
-  StoreWithTotemsDataSourceDTO,
-} from './dataSource.dto';
+} from 'src/common/dataSource/dataSource.dto';
 
-export interface DataSource {
+export interface StoreDataSource {
   findStoreByEmail(email: string): Promise<StoreDataSourceDTO | null>;
   findStoreByCnpj(cnpj: string): Promise<StoreDataSourceDTO | null>;
   findStoreByName(name: string): Promise<StoreDataSourceDTO | null>;
-  findStoreById(id: string): Promise<StoreWithTotemsDataSourceDTO | null>;
+  findStoreById(id: string): Promise<StoreDataSourceDTO | null>;
   addStore(store: StoreDataSourceDTO): Promise<void>;
 
   findTotemByAccessToken(

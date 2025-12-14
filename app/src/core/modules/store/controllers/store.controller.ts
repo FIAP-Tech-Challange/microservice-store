@@ -15,7 +15,6 @@ import { AddTotemUseCase } from '../useCases/addTotem.useCase';
 import { TotemPresenter } from '../presenters/totem.presenter';
 import { FindStoreByTotemAccessTokenUseCase } from '../useCases/findStoreByTotemAccessToken.useCase';
 import { CategoryGateway } from '../../product/gateways/category.gateway';
-import { CreateCategoryUseCase } from '../../product/useCases/createCategory.useCase';
 import { CreateStoreWithDefaultCategoriesUseCase } from '../useCases/createStoreWithDeafaultCategories.useCase';
 import { FindStoreByIdUseCase } from '../useCases/findStoreById.useCase';
 import { DeleteTotemUseCase } from '../useCases/DeleteTotem.useCase';
@@ -122,18 +121,11 @@ export class StoreCoreController {
   async createStore(dto: CreateStoreInputDTO): Promise<CoreResponse<StoreDTO>> {
     try {
       const storeGateway = new StoreGateway(this.dataSource);
-      const createStoreUseCase = new CreateStoreUseCase(storeGateway);
-      const findStoreByIdUseCase = new FindStoreByIdUseCase(storeGateway);
-
       const categoryGateway = new CategoryGateway(this.dataSource);
-      const createCategoryUseCase = new CreateCategoryUseCase(
-        categoryGateway,
-        findStoreByIdUseCase,
-      );
 
       const useCase = new CreateStoreWithDefaultCategoriesUseCase(
-        createStoreUseCase,
-        createCategoryUseCase,
+        storeGateway,
+        categoryGateway,
       );
 
       const { error: err, value: store } = await useCase.execute(dto);
