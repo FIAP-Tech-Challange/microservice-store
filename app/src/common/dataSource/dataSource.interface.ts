@@ -2,6 +2,7 @@ import {
   StoreDataSourceDTO,
   TotemDataSourceDTO,
   StoreWithTotemsDataSourceDTO,
+  ProductCategoryDataSourceDTO,
 } from './dataSource.dto';
 
 export interface DataSource {
@@ -16,4 +17,6 @@ export interface DataSource {
   ): Promise<TotemDataSourceDTO | null>;
   deleteTotem(totem: TotemDataSourceDTO): Promise<void>;
   createTotem(totem: TotemDataSourceDTO): Promise<void>;
+
+  createProductCategory(category: ProductCategoryDataSourceDTO): Promise<void>;
 }

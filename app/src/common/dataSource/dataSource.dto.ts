@@ -30,3 +30,8 @@ export interface TotemDataSourceDTO {
   token_access: string;
   created_at: string;
 }
+
+export interface ProductCategoryDataSourceDTO {
+  store_id: string;
+  name: string;
+}
