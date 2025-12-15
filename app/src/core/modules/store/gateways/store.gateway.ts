@@ -23,11 +23,7 @@ export class StoreGateway {
 
     if (!storeDTO) return { error: undefined, value: null };
 
-    const { error: mapErr, value: dto } = StoreMapper.toEntity(storeDTO);
-
-    if (mapErr) return { error: mapErr, value: undefined };
-
-    return { error: undefined, value: dto };
+    return this.findStoreById(storeDTO.id);
   }
 
   async findStoreByCnpj(cnpj: CNPJ): Promise<CoreResponse<Store | null>> {
@@ -35,43 +31,32 @@ export class StoreGateway {
 
     if (!storeDTO) return { error: undefined, value: null };
 
-    const { error: mapErr, value: dto } = StoreMapper.toEntity(storeDTO);
-
-    if (mapErr) return { error: mapErr, value: undefined };
-
-    return { error: undefined, value: dto };
+    return this.findStoreById(storeDTO.id);
   }
 
   async findStoreByName(name: string): Promise<CoreResponse<Store | null>> {
-    const storeDTO = await this.dataSource.findStoreByName(name);
+    const partialStoreDTO = await this.dataSource.findStoreByName(name);
 
-    if (!storeDTO) return { error: undefined, value: null };
+    if (!partialStoreDTO) return { error: undefined, value: null };
 
-    const { error: mapErr, value: dto } = StoreMapper.toEntity(storeDTO);
-
-    if (mapErr) return { error: mapErr, value: undefined };
-
-    return { error: undefined, value: dto };
+    return this.findStoreById(partialStoreDTO.id);
   }
 
   async saveStore(store: Store): Promise<CoreResponse<undefined>> {
     const storeDTO = StoreMapper.toPersistenceDTO(store);
+
     await this.dataSource.saveStore(storeDTO);
+
     return { error: undefined, value: undefined };
   }
 
   async findStoreByTotemAccessToken(
     accessToken: string,
   ): Promise<CoreResponse<Store | null>> {
-    const storeDTO =
-      await this.dataSource.findStoreByTotemAccessToken(accessToken);
+    const totemDTO = await this.dataSource.findTotemByAccessToken(accessToken);
 
-    if (!storeDTO) return { error: undefined, value: null };
+    if (!totemDTO) return { error: undefined, value: null };
 
-    const { error: mapErr, value: dto } = StoreMapper.toEntity(storeDTO);
-
-    if (mapErr) return { error: mapErr, value: undefined };
-
-    return { error: undefined, value: dto };
+    return this.findStoreById(totemDTO.store_id);
   }
 }

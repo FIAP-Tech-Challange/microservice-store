@@ -1,8 +1,8 @@
 import {
   DynamoDBDocumentClient,
   PutCommand,
-  DeleteCommand,
   QueryCommand,
+  DeleteCommand,
 } from '@aws-sdk/lib-dynamodb';
 
 import { StoreDataSource } from './store.dataSource';
@@ -24,6 +24,8 @@ type StoreItem = {
   password_hash: string;
   created_at: string;
   entityType: string;
+  nameNormalized: string;
+  emailNormalized: string;
 };
 
 type TotemItem = {
@@ -44,30 +46,31 @@ export class DynamoStoreDataSource implements StoreDataSource {
     private readonly ddb: DynamoDBDocumentClient,
   ) {}
 
-  async addStore(store: StoreDataSourceDTO): Promise<void> {
-    const cmd = new PutCommand({
-      TableName: this.tableName,
-      Item: {
-        PK: `STORE#${store.id}`,
-        SK: 'METADATA',
-        entityType: 'STORE',
+  async saveStore(store: StoreWithTotemsDataSourceDTO): Promise<void> {
+    const existing = await this.findStoreById(store.id);
 
-        cnpj: store.cnpj,
-        email: store.email,
-        name: store.name,
-        fantasy_name: store.fantasy_name,
-        phone: store.phone,
-        salt: store.salt,
-        password_hash: store.password_hash,
-        created_at: store.created_at,
+    const toDelete = this.diffTotems(existing, store);
+    const toUpsert = store.totems;
 
-        nameNormalized: this.normalizeName(store.name),
-        emailNormalized: store.email.toLocaleLowerCase(),
-      },
-      ConditionExpression: 'attribute_not_exists(PK)',
-    });
+    for (const totem of toDelete) {
+      await this.deleteTotem(totem);
+    }
 
-    await this.ddb.send(cmd);
+    await this.ddb.send(
+      new PutCommand({
+        TableName: this.tableName,
+        Item: this.mapStoreToItem(store),
+      }),
+    );
+
+    for (const totem of toUpsert) {
+      await this.ddb.send(
+        new PutCommand({
+          TableName: this.tableName,
+          Item: this.mapTotemToItem(totem),
+        }),
+      );
+    }
   }
 
   async findStoreById(
@@ -179,36 +182,6 @@ export class DynamoStoreDataSource implements StoreDataSource {
     };
   }
 
-  async createTotem(totem: TotemDataSourceDTO): Promise<void> {
-    await this.ddb.send(
-      new PutCommand({
-        TableName: this.tableName,
-        Item: {
-          PK: `STORE#${totem.store_id}`,
-          SK: `TOTEM#${totem.token_access}`,
-          entityType: 'TOTEM',
-          totem_id: totem.id,
-          name: totem.name,
-          token_access: totem.token_access,
-          created_at: totem.created_at,
-        },
-        ConditionExpression: 'attribute_not_exists(SK)',
-      }),
-    );
-  }
-
-  async deleteTotem(totem: TotemDataSourceDTO): Promise<void> {
-    await this.ddb.send(
-      new DeleteCommand({
-        TableName: this.tableName,
-        Key: {
-          PK: `STORE#${totem.store_id}`,
-          SK: `TOTEM#${totem.token_access}`,
-        },
-      }),
-    );
-  }
-
   async findTotemByAccessToken(
     accessToken: string,
   ): Promise<TotemDataSourceDTO | null> {
@@ -216,7 +189,7 @@ export class DynamoStoreDataSource implements StoreDataSource {
       new QueryCommand({
         TableName: this.tableName,
         IndexName: 'GSI_TOTEM',
-        KeyConditionExpression: 'totemKey = :token',
+        KeyConditionExpression: 'token_access = :token',
         ExpressionAttributeValues: {
           ':token': accessToken,
         },
@@ -234,6 +207,18 @@ export class DynamoStoreDataSource implements StoreDataSource {
       token_access: String(result.Items[0].token_access),
       created_at: String(result.Items[0].created_at),
     };
+  }
+
+  private async deleteTotem(totem: TotemDataSourceDTO): Promise<void> {
+    await this.ddb.send(
+      new DeleteCommand({
+        TableName: this.tableName,
+        Key: {
+          PK: `STORE#${totem.store_id}`,
+          SK: `TOTEM#${totem.id}`,
+        },
+      }),
+    );
   }
 
   private normalizeName(name: string) {
@@ -276,4 +261,93 @@ export class DynamoStoreDataSource implements StoreDataSource {
       })),
     };
   }
+
+  private mapStoreToItem(store: StoreDataSourceDTO): StoreItem {
+    return {
+      PK: `STORE#${store.id}`,
+      SK: 'METADATA',
+      entityType: 'STORE',
+      cnpj: store.cnpj,
+      email: store.email,
+      name: store.name,
+      fantasy_name: store.fantasy_name,
+      phone: store.phone,
+      salt: store.salt,
+      password_hash: store.password_hash,
+      created_at: store.created_at,
+      nameNormalized: this.normalizeName(store.name),
+      emailNormalized: store.email.toLocaleLowerCase(),
+    };
+  }
+
+  private mapTotemToItem(totem: TotemDataSourceDTO): TotemItem {
+    return {
+      PK: `STORE#${totem.store_id}`,
+      SK: `TOTEM#${totem.id}`,
+      entityType: 'TOTEM',
+      totem_id: totem.id,
+      name: totem.name,
+      token_access: totem.token_access,
+      created_at: totem.created_at,
+    };
+  }
+
+  private diffTotems(
+    existing: StoreWithTotemsDataSourceDTO | null,
+    incoming: StoreWithTotemsDataSourceDTO,
+  ): TotemDataSourceDTO[] {
+    if (!existing) return [];
+
+    const incomingKeys = new Set(incoming.totems.map((t) => t.token_access));
+
+    return existing.totems.filter((t) => !incomingKeys.has(t.token_access));
+  }
 }
+
+/**
+ * DynamoDB – Single Table (Stores)
+ *
+ * Primary Key:
+ *   - PK : string
+ *   - SK : string
+ *
+ * Entities:
+ *
+ * Store (Aggregate Root)
+ *   PK = STORE#{storeId}
+ *   SK = STORE
+ *
+ * Totem (Child Entity)
+ *   PK = STORE#{storeId}
+ *   SK = TOTEM#{totemId}
+ *
+ * Global Secondary Indexes:
+ *
+ * - GSI_EMAIL
+ *     PK: emailNormalized
+ *     Used to find Store by email
+ *
+ * - GSI_CNPJ
+ *     PK: cnpj
+ *     Used to find Store by CNPJ
+ *
+ * - GSI_NAME
+ *     PK: nameNormalized
+ *     Used to find Store by name
+ *
+ * - GSI_TOTEM
+ *     PK: token_access
+ *     Used to authenticate Totem and resolve its Store
+ *
+ * Access Patterns:
+ *
+ * - Get Store by ID → returns Store + Totems
+ * - Get Store by Email / CNPJ / Name
+ * - Get Totem by access token
+ *
+ * Notes:
+ * - Store is the aggregate root
+ * - Totems only exist within a Store
+ * - Persistence orchestration happens in the DataSource
+ * - No transactions (academic scope)
+ */

@@ -14,7 +14,10 @@ export class AddTotemUseCase {
     const store = await this.findStoreByIdUseCase.execute(dto.storeId);
     if (store.error) return { error: store.error, value: undefined };
 
-    const totem = Totem.create({ name: dto.totemName });
+    const totem = Totem.create({
+      name: dto.totemName,
+      storeId: store.value.id,
+    });
     if (totem.error) return { error: totem.error, value: undefined };
 
     const addTotem = store.value.addTotem(totem.value);

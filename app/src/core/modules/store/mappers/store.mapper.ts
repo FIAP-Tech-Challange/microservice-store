@@ -1,15 +1,15 @@
-import { StoreDataSourceDTO } from 'src/common/dataSource/DTOs/storeDataSource.dto';
+import { StoreWithTotemsDataSourceDTO } from 'src/common/dataSource/dataSource.dto';
 import { Store } from '../entities/store.entity';
 import { CNPJ } from 'src/core/common/valueObjects/cnpj.vo';
 import { Email } from 'src/core/common/valueObjects/email.vo';
-import { BrazilianPhone } from 'src/core/common/valueObjects/brazilian-phone.vo';
+import { BrazilianPhone } from 'src/core/common/valueObjects/brazilianPhone.vo';
 import { CoreResponse } from 'src/common/DTOs/coreResponse';
 import { TotemMapper } from './totem.mapper';
 import { Totem } from '../entities/totem.entity';
 import { CoreException } from 'src/common/exceptions/coreException';
 
 export class StoreMapper {
-  static toEntity(dto: StoreDataSourceDTO): CoreResponse<Store> {
+  static toEntity(dto: StoreWithTotemsDataSourceDTO): CoreResponse<Store> {
     const cnpj = CNPJ.create(dto.cnpj);
     if (cnpj.error) return { error: cnpj.error, value: undefined };
 
@@ -47,7 +47,7 @@ export class StoreMapper {
     });
   }
 
-  static toPersistenceDTO(entity: Store): StoreDataSourceDTO {
+  static toPersistenceDTO(entity: Store): StoreWithTotemsDataSourceDTO {
     return {
       id: entity.id,
       name: entity.name,
@@ -58,7 +58,9 @@ export class StoreMapper {
       cnpj: entity.cnpj.toString(),
       email: entity.email.toString(),
       phone: entity.phone.toString(),
-      totems: entity.totems.map((totem) => TotemMapper.toPersistenceDTO(totem)),
+      totems: entity
+        .getTotems()
+        .map((totem) => TotemMapper.toPersistenceDTO(totem)),
     };
   }
 }

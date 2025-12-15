@@ -2,10 +2,10 @@ import { DataSource } from 'src/common/dataSource/dataSource.interface';
 import { StoreDataSource } from './store/store.dataSource';
 import { ProductCategoryDataSource } from './productCategory/productCategory.dataSource';
 import {
-  StoreDataSourceDTO,
   StoreWithTotemsDataSourceDTO,
   TotemDataSourceDTO,
   ProductCategoryDataSourceDTO,
+  StoreDataSourceDTO,
 } from 'src/common/dataSource/dataSource.dto';
 
 export class DataSourceProxy implements DataSource {
@@ -20,16 +20,8 @@ export class DataSourceProxy implements DataSource {
     this.productCategoryDataSource = productCategoryDataSource;
   }
 
-  async addStore(store: StoreDataSourceDTO): Promise<void> {
-    await this.storeDataSource.addStore(store);
-  }
-
-  async createTotem(totem: TotemDataSourceDTO): Promise<void> {
-    await this.storeDataSource.createTotem(totem);
-  }
-
-  async deleteTotem(totem: TotemDataSourceDTO): Promise<void> {
-    await this.storeDataSource.deleteTotem(totem);
+  async saveStore(store: StoreWithTotemsDataSourceDTO): Promise<void> {
+    await this.storeDataSource.saveStore(store);
   }
 
   async findStoreById(

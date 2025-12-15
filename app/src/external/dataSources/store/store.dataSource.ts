@@ -1,7 +1,7 @@
 import {
-  StoreDataSourceDTO,
   TotemDataSourceDTO,
   StoreWithTotemsDataSourceDTO,
+  StoreDataSourceDTO,
 } from 'src/common/dataSource/dataSource.dto';
 
 export interface StoreDataSource {
@@ -9,11 +9,9 @@ export interface StoreDataSource {
   findStoreByCnpj(cnpj: string): Promise<StoreDataSourceDTO | null>;
   findStoreByName(name: string): Promise<StoreDataSourceDTO | null>;
   findStoreById(id: string): Promise<StoreWithTotemsDataSourceDTO | null>;
-  addStore(store: StoreDataSourceDTO): Promise<void>;
+  saveStore(store: StoreWithTotemsDataSourceDTO): Promise<void>;
 
   findTotemByAccessToken(
     accessToken: string,
   ): Promise<TotemDataSourceDTO | null>;
-  deleteTotem(totem: TotemDataSourceDTO): Promise<void>;
-  createTotem(totem: TotemDataSourceDTO): Promise<void>;
 }

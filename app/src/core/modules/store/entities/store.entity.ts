@@ -87,8 +87,8 @@ export class Store {
     return this._createdAt;
   }
 
-  get totems() {
-    return this._totems;
+  getTotems() {
+    return [...this._totems];
   }
 
   verifyPassword(plainPassword: string): boolean {
@@ -122,10 +122,10 @@ export class Store {
     if (!this.phone) {
       throw new ResourceInvalidException('Phone is required');
     }
-    if (!this.totems) {
+    if (!this._totems) {
       throw new ResourceInvalidException('Totems is required');
     } else {
-      if (this.totems.some((totem) => !(totem instanceof Totem))) {
+      if (this._totems.some((totem) => !(totem instanceof Totem))) {
         throw new ResourceInvalidException('All totems must be valid');
       }
     }
@@ -133,11 +133,11 @@ export class Store {
 
   removeTotem(totemId: string): CoreResponse<void> {
     try {
-      const totemIndex = this.totems.findIndex((t) => t.id === totemId);
+      const totemIndex = this._totems.findIndex((t) => t.id === totemId);
       if (totemIndex === -1) {
         throw new ResourceInvalidException('Totem not found');
       }
-      this.totems.splice(totemIndex, 1);
+      this._totems.splice(totemIndex, 1);
       return { error: undefined, value: undefined };
     } catch (error) {
       return { error: error as CoreException, value: undefined };
@@ -146,7 +146,7 @@ export class Store {
 
   addTotem(totem: Totem): CoreResponse<undefined> {
     try {
-      this.totems.forEach((t) => {
+      this._totems.forEach((t) => {
         if (t.name === totem.name) {
           throw new ResourceConflictException(
             'Totem with this name already exists',
@@ -165,7 +165,7 @@ export class Store {
           );
         }
       });
-      this.totems.push(totem);
+      this._totems.push(totem);
       return { error: undefined, value: undefined };
     } catch (error) {
       return { error: error as CoreException, value: undefined };
