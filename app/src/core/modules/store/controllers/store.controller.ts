@@ -8,16 +8,15 @@ import { StorePresenter } from '../presenters/store.presenter';
 import { CoreResponse } from 'src/common/DTOs/coreResponse';
 import { UnexpectedError } from 'src/common/exceptions/unexpectedError';
 import { CreateStoreInputDTO } from '../DTOs/createStoreInput.dto';
-import { CreateStoreUseCase } from '../useCases/createStore.useCase';
 import { AddTotemInputDTO } from '../DTOs/addTotemInput.dto';
 import { TotemDTO } from '../DTOs/totem.dto';
 import { AddTotemUseCase } from '../useCases/addTotem.useCase';
 import { TotemPresenter } from '../presenters/totem.presenter';
 import { FindStoreByTotemAccessTokenUseCase } from '../useCases/findStoreByTotemAccessToken.useCase';
-import { CategoryGateway } from '../../product/gateways/category.gateway';
 import { CreateStoreWithDefaultCategoriesUseCase } from '../useCases/createStoreWithDeafaultCategories.useCase';
 import { FindStoreByIdUseCase } from '../useCases/findStoreById.useCase';
-import { DeleteTotemUseCase } from '../useCases/DeleteTotem.useCase';
+import { DeleteTotemUseCase } from '../useCases/deleteTotem.useCase';
+import { ProductCategoryGateway } from '../gateways/productCategory.gateway';
 
 export class StoreCoreController {
   constructor(private dataSource: DataSource) {}
@@ -121,7 +120,7 @@ export class StoreCoreController {
   async createStore(dto: CreateStoreInputDTO): Promise<CoreResponse<StoreDTO>> {
     try {
       const storeGateway = new StoreGateway(this.dataSource);
-      const categoryGateway = new CategoryGateway(this.dataSource);
+      const categoryGateway = new ProductCategoryGateway(this.dataSource);
 
       const useCase = new CreateStoreWithDefaultCategoriesUseCase(
         storeGateway,
