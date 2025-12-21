@@ -62,7 +62,7 @@ export class CreateStoreWithDefaultCategoriesUseCase {
     return { error: undefined, value: store.value };
   }
 
-  async validateIfStoreExists(
+  private async validateIfStoreExists(
     email: Email,
     cnpj: CNPJ,
     name: string,
