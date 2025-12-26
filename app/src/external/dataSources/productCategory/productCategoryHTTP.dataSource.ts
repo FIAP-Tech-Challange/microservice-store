@@ -4,22 +4,18 @@ import { ProductCategoryDataSource } from './productCategory.dataSource';
 export class ProductCategoryHTTPDataSource
   implements ProductCategoryDataSource
 {
-  private readonly serviceUrl: string;
-  private readonly token: string;
-
-  constructor(serviceUrl: string, token: string) {
-    this.serviceUrl = serviceUrl;
-    this.token = token;
-  }
+  constructor() {}
 
   async createProductCategory(
     category: ProductCategoryDataSourceDTO,
+    serviceUrl: string,
+    apiKey: string,
   ): Promise<void> {
-    await fetch(`${this.serviceUrl}/categories`, {
+    await fetch(`${serviceUrl}/categories`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.token}`,
+        'x-api-key': apiKey,
       },
       body: JSON.stringify({
         storeId: category.store_id,

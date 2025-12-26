@@ -16,5 +16,9 @@ export interface DataSource {
     accessToken: string,
   ): Promise<TotemDataSourceDTO | null>;
 
-  createProductCategory(category: ProductCategoryDataSourceDTO): Promise<void>;
+  createProductCategory(
+    category: ProductCategoryDataSourceDTO,
+    serviceUrl: string,
+    apiKey: string,
+  ): Promise<void>;
 }

@@ -14,16 +14,40 @@ export class CreateStoreWithDefaultCategoriesUseCase {
     private categoryGateway: ProductCategoryGateway,
   ) {}
 
-  async execute(dto: CreateStoreInputDTO): Promise<CoreResponse<Store>> {
+  async execute(
+    dto: CreateStoreInputDTO,
+    categoryApiPath: string,
+    categoryApiKey: string,
+  ): Promise<CoreResponse<Store>> {
     const store = await this.createStore(dto);
 
     if (store.error) return { error: store.error, value: undefined };
 
     await Promise.all([
-      this.categoryGateway.create(store.value.id, 'Lanche'),
-      this.categoryGateway.create(store.value.id, 'Acompanhamento'),
-      this.categoryGateway.create(store.value.id, 'Bebida'),
-      this.categoryGateway.create(store.value.id, 'Sobremesa'),
+      this.categoryGateway.create(
+        store.value.id,
+        'Lanche',
+        categoryApiPath,
+        categoryApiKey,
+      ),
+      this.categoryGateway.create(
+        store.value.id,
+        'Acompanhamento',
+        categoryApiPath,
+        categoryApiKey,
+      ),
+      this.categoryGateway.create(
+        store.value.id,
+        'Bebida',
+        categoryApiPath,
+        categoryApiKey,
+      ),
+      this.categoryGateway.create(
+        store.value.id,
+        'Sobremesa',
+        categoryApiPath,
+        categoryApiKey,
+      ),
     ]);
 
     return { error: undefined, value: store.value };
