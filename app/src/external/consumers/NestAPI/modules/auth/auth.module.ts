@@ -4,9 +4,7 @@ import { StoresModule } from '../stores/stores.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { ConfigService } from '@nestjs/config';
-import { StoreOrTotemGuard } from './guards/store-or-totem.guard';
 import { StoreGuard } from './guards/store.guard';
-import { TotemGuard } from './guards/totem.guard';
 import { ApiKeyGuard } from './guards/api-key.guard';
 
 @Global()
@@ -27,20 +25,7 @@ import { ApiKeyGuard } from './guards/api-key.guard';
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    StoreOrTotemGuard,
-    TotemGuard,
-    StoreGuard,
-    ApiKeyGuard,
-  ],
-  exports: [
-    JwtModule,
-    StoresModule,
-    StoreOrTotemGuard,
-    TotemGuard,
-    StoreGuard,
-    ApiKeyGuard,
-  ],
+  providers: [AuthService, StoreGuard, ApiKeyGuard],
+  exports: [JwtModule, StoresModule, StoreGuard, ApiKeyGuard],
 })
 export class AuthModule {}

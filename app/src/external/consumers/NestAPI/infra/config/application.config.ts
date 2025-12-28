@@ -2,6 +2,7 @@ export default () => ({
   apiKey: process.env.API_KEY,
   categoryPathParameterName: process.env.CATEGORY_PATH_PARAMETER_NAME,
   categoryApiKeySecretName: process.env.CATEGORY_API_KEY_SECRET_NAME,
+  // TODO: change to fetch at runtime
   jwtSecret: process.env.JWT_SECRET,
   jwtAccessTokenExpirationTime: Number(
     process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME ?? 900,
