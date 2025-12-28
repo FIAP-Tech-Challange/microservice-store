@@ -11,6 +11,7 @@ import { AwsParameterStoreService } from './shared/services/parameter-store.serv
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: '.env',
       isGlobal: true,
       load: [applicationConfig],
     }),

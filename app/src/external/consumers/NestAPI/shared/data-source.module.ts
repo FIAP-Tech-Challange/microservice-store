@@ -23,7 +23,7 @@ import { ProductCategoryHTTPDataSource } from 'src/external/dataSources/productC
         });
 
         const storeDataSource = new DynamoStoreDataSource(
-          process.env.DYNAMO_TABLE_NAME!,
+          process.env.DYNAMODB_TABLE_NAME!,
           docClient,
         );
         const productCategoryDataSource = new ProductCategoryHTTPDataSource();
