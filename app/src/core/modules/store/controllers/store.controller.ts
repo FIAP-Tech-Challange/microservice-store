@@ -117,11 +117,7 @@ export class StoreCoreController {
     }
   }
 
-  async createStore(
-    dto: CreateStoreInputDTO,
-    categoryApiPath: string,
-    categoryApiKey: string,
-  ): Promise<CoreResponse<StoreDTO>> {
+  async createStore(dto: CreateStoreInputDTO): Promise<CoreResponse<StoreDTO>> {
     try {
       const storeGateway = new StoreGateway(this.dataSource);
       const categoryGateway = new ProductCategoryGateway(this.dataSource);
@@ -131,11 +127,7 @@ export class StoreCoreController {
         categoryGateway,
       );
 
-      const { error: err, value: store } = await useCase.execute(
-        dto,
-        categoryApiPath,
-        categoryApiKey,
-      );
+      const { error: err, value: store } = await useCase.execute(dto);
 
       if (err) return { error: err, value: undefined };
 

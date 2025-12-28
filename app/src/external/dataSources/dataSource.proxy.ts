@@ -50,13 +50,7 @@ export class DataSourceProxy implements DataSource {
 
   async createProductCategory(
     category: ProductCategoryDataSourceDTO,
-    serviceUrl: string,
-    apiKey: string,
   ): Promise<void> {
-    await this.productCategoryDataSource.createProductCategory(
-      category,
-      serviceUrl,
-      apiKey,
-    );
+    return this.productCategoryDataSource.createProductCategory(category);
   }
 }

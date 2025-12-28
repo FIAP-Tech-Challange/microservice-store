@@ -30,8 +30,6 @@ import type { RequestFromStore } from '../auth/dtos/request.dto';
 import { ResponseStoreDto } from './dtos/response-store.dto';
 import { DataSourceProxy } from 'src/external/dataSources/dataSource.proxy';
 import { StoreService } from './store.service';
-import { AwsSecretManagerService } from '../../shared/services/secret-manager.service';
-import { AwsParameterStoreService } from '../../shared/services/parameter-store.service';
 import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Store')
@@ -43,8 +41,6 @@ export class StoresController {
   private readonly logger = new Logger(StoresController.name);
   constructor(
     private dataSourceProxy: DataSourceProxy,
-    private secretManagerService: AwsSecretManagerService,
-    private parameterStoreService: AwsParameterStoreService,
     private configService: ConfigService,
   ) {}
 
@@ -74,8 +70,6 @@ export class StoresController {
   async create(@Body() dto: CreateStoreInputDto): Promise<StoreIdDto> {
     try {
       const service = new StoreService(
-        this.secretManagerService,
-        this.parameterStoreService,
         new StoreCoreController(this.dataSourceProxy),
         this.configService,
       );
