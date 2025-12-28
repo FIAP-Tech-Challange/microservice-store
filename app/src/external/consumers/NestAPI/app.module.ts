@@ -5,8 +5,6 @@ import applicationConfig from './infra/config/application.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { DataSourceModule } from './shared/data-source.module';
 import { StoresModule } from './modules/stores/stores.module';
-import { AwsSecretManagerService } from './shared/services/secret-manager.service';
-import { AwsParameterStoreService } from './shared/services/parameter-store.service';
 import { AwsModule } from './shared/aws.module';
 
 @Module({
