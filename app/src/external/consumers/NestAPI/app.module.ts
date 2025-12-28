@@ -7,20 +7,21 @@ import { DataSourceModule } from './shared/data-source.module';
 import { StoresModule } from './modules/stores/stores.module';
 import { AwsSecretManagerService } from './shared/services/secret-manager.service';
 import { AwsParameterStoreService } from './shared/services/parameter-store.service';
+import { AwsModule } from './shared/aws.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
       isGlobal: true,
       load: [applicationConfig],
     }),
     DataSourceModule,
+    AwsModule,
     HealthModule,
     AuthModule,
     StoresModule,
   ],
   controllers: [],
-  providers: [AwsSecretManagerService, AwsParameterStoreService],
+  providers: [],
 })
 export class AppModule {}
