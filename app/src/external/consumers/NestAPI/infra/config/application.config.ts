@@ -6,6 +6,6 @@ export default () => ({
 
   jwtSecretName: process.env.JWT_SECRET_NAME,
   jwtAccessTokenExpirationTime: Number(
-    process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME ?? 900,
+    process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME,
   ),
 });
