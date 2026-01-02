@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { StoreTokenInterface } from './dtos/token.dto';
 import { StoreCoreController } from 'src/core/modules/store/controllers/store.controller';
@@ -8,6 +8,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private dataSourceProxy: DataSourceProxy,
     private configService: ConfigService,
@@ -19,6 +21,7 @@ export class AuthService {
       const jwtSecretName = this.configService.get<string>('jwtSecretName');
 
       if (!jwtSecretName) {
+        this.logger.error('JWT secret name is not configured');
         throw new UnauthorizedException('JWT secret name is not configured');
       }
 
@@ -33,10 +36,15 @@ export class AuthService {
         },
       });
 
+      this.logger.log(`Attempting login for email: ${email}`);
+
       const coreController = new StoreCoreController(this.dataSourceProxy);
       const findStoreByEmail = await coreController.findStoreByEmail(email);
 
+      this.logger.debug(findStoreByEmail);
+
       if (findStoreByEmail.error) {
+        this.logger.warn(`Login failed for email: ${email} - Store not found`);
         throw new UnauthorizedException('Email or password is incorrect');
       }
 

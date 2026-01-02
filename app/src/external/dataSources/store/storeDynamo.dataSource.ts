@@ -107,16 +107,18 @@ export class DynamoStoreDataSource implements StoreDataSource {
       return null;
     }
 
+    const item = result.Items[0];
+
     return {
-      id: String(result.Items[0].id),
-      cnpj: String(result.Items[0].cnpj),
-      email: String(result.Items[0].email),
-      name: String(result.Items[0].name),
-      fantasy_name: String(result.Items[0].fantasy_name),
-      phone: String(result.Items[0].phone),
-      salt: String(result.Items[0].salt),
-      password_hash: String(result.Items[0].password_hash),
-      created_at: String(result.Items[0].created_at),
+      id: String(item.PK).replace('STORE#', ''),
+      cnpj: String(item.cnpj),
+      email: String(item.email),
+      name: String(item.name),
+      fantasy_name: String(item.fantasy_name),
+      phone: String(item.phone),
+      salt: String(item.salt),
+      password_hash: String(item.password_hash),
+      created_at: String(item.created_at),
     };
   }
 
@@ -139,7 +141,7 @@ export class DynamoStoreDataSource implements StoreDataSource {
     const item = result.Items[0];
 
     return {
-      id: String(item.id),
+      id: String(item.PK).replace('STORE#', ''),
       cnpj: String(item.cnpj),
       email: String(item.email),
       name: String(item.name),
@@ -170,7 +172,7 @@ export class DynamoStoreDataSource implements StoreDataSource {
     const item = result.Items[0];
 
     return {
-      id: String(item.id),
+      id: String(item.PK).replace('STORE#', ''),
       cnpj: String(item.cnpj),
       email: String(item.email),
       name: String(item.name),

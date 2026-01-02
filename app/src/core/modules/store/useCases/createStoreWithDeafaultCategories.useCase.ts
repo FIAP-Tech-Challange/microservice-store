@@ -7,8 +7,11 @@ import { Email } from 'src/core/common/valueObjects/email.vo';
 import { CNPJ } from 'src/core/common/valueObjects/cnpj.vo';
 import { BrazilianPhone } from 'src/core/common/valueObjects/brazilianPhone.vo';
 import { ResourceConflictException } from 'src/common/exceptions/resourceConflictException';
+import { Logger } from '@nestjs/common';
 
 export class CreateStoreWithDefaultCategoriesUseCase {
+  private logger = new Logger(CreateStoreWithDefaultCategoriesUseCase.name);
+
   constructor(
     private storeGateway: StoreGateway,
     private categoryGateway: ProductCategoryGateway,
@@ -38,6 +41,10 @@ export class CreateStoreWithDefaultCategoriesUseCase {
 
     const phone = BrazilianPhone.create(dto.phone);
     if (phone.error) return { error: phone.error, value: undefined };
+
+    this.logger.log(
+      `Creating store with email: ${email.value.toString()}, cnpj: ${cnpj.value.toString()}, name: ${dto.name}`,
+    );
 
     const exists = await this.validateIfStoreExists(
       email.value,

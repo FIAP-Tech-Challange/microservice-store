@@ -17,6 +17,7 @@ services:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=us-east-1
+      - AWS_REGION=us-east-1
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
       - DYNAMODB_TABLE_NAME=${DYNAMODB_TABLE_NAME}
     entrypoint: ['/bin/sh', '/init-dynamodb.sh']
@@ -43,12 +44,18 @@ services:
       - NODE_ENV=development
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
       - DYNAMODB_TABLE_NAME=${DYNAMODB_TABLE_NAME}
-      - JWT_SECRET=${JWT_SECRET}
+
+      - JWT_SECRET_NAME=${JWT_SECRET_NAME}
       - JWT_ACCESS_TOKEN_EXPIRATION_TIME=${JWT_ACCESS_TOKEN_EXPIRATION_TIME}
-      - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
-      - API_KEY=${API_KEY}
+
+      - API_KEY_SECRET_NAME=${API_KEY_SECRET_NAME}
       - CATEGORY_PATH_PARAMETER_NAME=${CATEGORY_PATH_PARAMETER_NAME}
       - CATEGORY_API_KEY_SECRET_NAME=${CATEGORY_API_KEY_SECRET_NAME}
+
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
     depends_on:
       dynamodb-init:
         condition: service_completed_successfully

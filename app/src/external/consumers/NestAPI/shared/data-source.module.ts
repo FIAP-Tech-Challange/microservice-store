@@ -11,7 +11,11 @@ import { ProductCategoryHTTPDataSource } from 'src/external/dataSources/productC
     {
       provide: DataSourceProxy,
       useFactory: () => {
-        const dynamoClient = new DynamoDBClient();
+        const dynamoClient = new DynamoDBClient({
+          region: process.env.AWS_REGION || 'us-east-1',
+          endpoint: process.env.DYNAMODB_ENDPOINT || undefined,
+        });
+
         const docClient = DynamoDBDocumentClient.from(dynamoClient, {
           marshallOptions: {
             removeUndefinedValues: true,
