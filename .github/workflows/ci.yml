@@ -1,0 +1,213 @@
+name: "Store Microservice CI/CD Pipeline"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run tests
+        run: npm test
+
+      - name: 🏗️ Build application
+        run: npm run build
+
+  bootstrap:
+    name: "Bootstrap the application"
+    runs-on: ubuntu-latest
+    needs: test
+    outputs:
+      terraform_bucket: ${{ steps.set-outputs.outputs.terraform_bucket }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install AWS CLI if running in act
+        if: env.ACT == 'true'
+        run: |
+          echo "Running under act, installing AWS CLI..."
+          sudo apt-get update -y
+          sudo apt-get install -y unzip curl less
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          sudo ./aws/install
+
+      - name: Create S3 Bucket for Terraform State
+        id: bootstrap
+        run: |
+          BUCKET_PREFIX="terraform-state-store"
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "AWS Account ID: $ACCOUNT_ID"
+
+          REGION="us-east-1"
+          BUCKET_NAME="${BUCKET_PREFIX}-${ACCOUNT_ID}"
+          echo "S3 bucket name: $BUCKET_NAME"
+
+          # Check if bucket exists, create if not
+          echo "Checking S3 bucket..."
+          if aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+            echo "S3 bucket '$BUCKET_NAME' already exists"
+          else
+            echo "Creating S3 bucket '$BUCKET_NAME'..."
+            aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION"
+            echo "S3 bucket '$BUCKET_NAME' created successfully"
+          fi
+
+          echo "Bootstrap finished. Bucket: $BUCKET_NAME"
+          echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
+
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo "terraform_bucket=$BUCKET_NAME" >> $GITHUB_OUTPUT
+
+  build-and-push-image:
+    name: 📦 Build and Push to ECR
+    runs-on: ubuntu-latest
+    needs: bootstrap
+    outputs:
+      ecr_image_uri: ${{ steps.tags.outputs.image_tags }}
+
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install AWS CLI if running in act
+        if: env.ACT == 'true'
+        run: |
+          echo "Running under act, installing AWS CLI..."
+          sudo apt-get update -y
+          sudo apt-get install -y unzip curl less
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          sudo ./aws/install
+
+      - name: ✅ Verify AWS Identity
+        run: aws sts get-caller-identity
+
+      - name: 📦 Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: 🏷️ Define Image Tags
+        id: tags
+        run: |
+          COMMIT_HASH=${{ github.sha }}
+          ECR_URL=${{ secrets.ECR_REPOSITORY_URI }}
+          TAGS="${ECR_URL}:${COMMIT_HASH}"
+
+          echo "image_tags=$TAGS" >> $GITHUB_OUTPUT
+
+      - name: 🐳 Build and Push Docker Image
+        run: |
+          echo "Building with tags: --tag ${{ steps.tags.outputs.image_tags }}"
+
+          docker build \
+            --tag ${{ steps.tags.outputs.image_tags }} \
+            --push .
+
+  terraform:
+    name: "Infrastructure Plan/Apply"
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-push-image
+      - bootstrap
+
+    defaults:
+      run:
+        working-directory: ./infra
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      - name: Log Bucket Name
+        run: |
+          echo "Using Terraform S3 backend bucket: ${{ needs.bootstrap.outputs.terraform_bucket }}"
+
+      - name: 🔄 Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ needs.bootstrap.outputs.terraform_bucket }}" \
+            -backend-config="region=us-east-1"
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: |
+          terraform plan -no-color \
+            -var="environment=production" \
+            -var="ecr_image_uri=${{ needs.build-and-push-image.outputs.ecr_image_uri }}" \
+            -var="store_table_name=${{ secrets.DYNAMODB_TABLE_NAME }}" \
+            -var="api_key_secret_name=${{ secrets.API_KEY_SECRET_NAME }}" \
+            -var="categoryPathParameterName=${{ secrets.CATEGORY_PATH_PARAMETER_NAME }}" \
+            -var="categoryApiKeySecretName=${{ secrets.CATEGORY_API_KEY_SECRET_NAME }}" \
+            -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}" \
+            -var="jwtAccessTokenExpirationTime=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}"
+
+      - name: Terraform Apply
+        run: |
+          terraform apply -auto-approve \
+            -var="environment=production" \
+            -var="ecr_image_uri=${{ needs.build-and-push-image.outputs.ecr_image_uri }}" \
+            -var="store_table_name=${{ secrets.DYNAMODB_TABLE_NAME }}" \
+            -var="api_key_secret_name=${{ secrets.API_KEY_SECRET_NAME }}" \
+            -var="categoryPathParameterName=${{ secrets.CATEGORY_PATH_PARAMETER_NAME }}" \
+            -var="categoryApiKeySecretName=${{ secrets.CATEGORY_API_KEY_SECRET_NAME }}" \
+            -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}" \
+            -var="jwtAccessTokenExpirationTime=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}"
