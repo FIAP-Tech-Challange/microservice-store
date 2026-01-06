@@ -40,4 +40,5 @@ module "parameter_store" {
 module "secret_manager" {
   source              = "./modules/secret-manager"
   api_key_secret_name = var.api_key_secret_name
+  jwtSecretName       = var.jwtSecretName
 }

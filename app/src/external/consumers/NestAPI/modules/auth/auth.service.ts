@@ -54,6 +54,7 @@ export class AuthService {
       });
 
       if (validatePassword.error || validatePassword.value === false) {
+        this.logger.warn(`Login failed for email: ${email} - Invalid password`);
         throw new UnauthorizedException('Email or password is incorrect');
       }
 
@@ -63,7 +64,10 @@ export class AuthService {
       };
 
       return jwtService.signAsync(payload);
-    } catch {
+    } catch (error) {
+      this.logger.error(
+        `Login error for email: ${email} - ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw new UnauthorizedException('Email or password is incorrect');
     }
   }

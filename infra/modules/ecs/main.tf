@@ -17,6 +17,14 @@ data "aws_iam_role" "lab_role" {
 }
 
 # ------------------------------
+# CloudWatch Log Group
+# ------------------------------
+resource "aws_cloudwatch_log_group" "store_logs" {
+  name              = "/ecs/store-service"
+  retention_in_days = 7 # Adjust as needed
+}
+
+# ------------------------------
 # Security Groups
 # ------------------------------
 
@@ -126,7 +134,20 @@ resource "aws_ecs_task_definition" "store_app" {
         }
       ]
 
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.store_logs.name
+          "awslogs-region"        = var.aws_region
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
+
       environment = [
+        {
+          name  = "AWS_REGION"
+          value = var.aws_region
+        },
         {
           name  = "DYNAMODB_TABLE_NAME"
           value = var.dynamodb_table_name
