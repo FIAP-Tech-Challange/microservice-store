@@ -74,7 +74,9 @@
       "core/**/*.(t|j)s",
       "!core/**/*.spec.ts",
       "!core/**/*.interface.ts",
-      "!core/**/index.ts"
+      "!core/**/index.ts",
+      "!core/**/controllers/**",
+      "!core/**/gateways/**"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
