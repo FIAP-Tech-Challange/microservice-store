@@ -278,7 +278,7 @@ export class DynamoStoreDataSource implements StoreDataSource {
       password_hash: store.password_hash,
       created_at: store.created_at,
       nameNormalized: this.normalizeName(store.name),
-      emailNormalized: store.email.toLocaleLowerCase(),
+      emailNormalized: store.email.toLowerCase(),
     };
   }
 
