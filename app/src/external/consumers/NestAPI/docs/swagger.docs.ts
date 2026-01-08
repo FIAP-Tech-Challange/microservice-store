@@ -4,9 +4,9 @@ import { writeFileSync } from 'fs';
 
 export class SwaggerDoc {
   setupDocs = (app: INestApplication) => {
-    const title = 'API Tech Challenge - Phase Two';
-    const description = `This application provides data from the cafeteria to customers and employees.`;
-    const version = '1.0.0';
+    const title = 'Tech Challenge Phase Four - Store Microservice';
+    const description = `Store management microservice. Handles store registration, configuration, and operational settings for the cafeteria system.`;
+    const version = '4.0.0';
 
     const config = new DocumentBuilder()
       .setTitle(title)
