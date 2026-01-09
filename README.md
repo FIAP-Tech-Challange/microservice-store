@@ -3,55 +3,55 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT_KEY&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=YOUR_SONAR_PROJECT_KEY)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT_KEY&metric=coverage)](https://sonarcloud.io/summary/new_code?id=YOUR_SONAR_PROJECT_KEY)
 
-## 📋 Overview
+## 📋 Visão Geral
 
-Microservice responsible for **store/establishment management** built with **Clean Architecture** and **NestJS**. This service is part of the Tech Challenge microservices architecture and handles all domain logic related to store operations, configurations, and management.
+Microserviço responsável pela **gestão de lojas/estabelecimentos** construído com **Clean Architecture** e **NestJS**. Este serviço faz parte da arquitetura de microserviços do Tech Challenge e gerencia toda a lógica de domínio relacionada a operações, configurações e gerenciamento de lojas.
 
-## 🚀 Features
+## 🚀 Funcionalidades
 
-### 🏪 Store Management
+### 🏪 Gestão de Lojas
 
-- Store registration and authentication
-- Store profile management
-- Business hours configuration
-- Location and contact information
-- Multi-store support
+- Cadastro e autenticação de lojas
+- Gestão de perfil de lojas
+- Configuração de horário de funcionamento
+- Informações de localização e contato
+- Suporte a múltiplas lojas
 
-### ⚙️ Store Configuration
+### ⚙️ Configuração de Lojas
 
-- Operational settings
-- Business rules customization
+- Configurações operacionais
+- Personalização de regras de negócio
 - Feature toggles
-- Regional settings
+- Configurações regionais
 
-### 📊 Store Analytics
+### 📊 Análises de Lojas
 
-- Operational metrics
-- Performance tracking
-- Store status monitoring
+- Métricas operacionais
+- Rastreamento de desempenho
+- Monitoramento de status de lojas
 
-## 📊 Quality Metrics
+## 📊 Métricas de Qualidade
 
-- **Coverage**: 93.87% (90 tests)
-- **Quality**: Integrated with SonarCloud
-- **CI/CD**: Automated pipeline with GitHub Actions
-- **Architecture**: Clean Architecture with isolated domains
+- **Cobertura**: 93.87% (90 testes)
+- **Qualidade**: Integrado com SonarCloud
+- **CI/CD**: Pipeline automatizado com GitHub Actions
+- **Arquitetura**: Clean Architecture com domínios isolados
 
-## 🏗️ Architecture
+## 🏗️ Arquitetura
 
-### Technology Stack
+### Stack Tecnológico
 
-- **Framework**: NestJS 10.x with TypeScript 5.9.3
-- **Architecture**: Clean Architecture (Hexagonal)
-- **Database**: PostgreSQL with TypeORM
+- **Framework**: NestJS 10.x com TypeScript 5.9.3
+- **Arquitetura**: Clean Architecture (Hexagonal)
+- **Banco de Dados**: PostgreSQL com TypeORM
 - **Container**: Docker
-- **Orchestration**: AWS ECS / Terraform
-- **Testing**: Jest (93.87% coverage)
-- **Code Quality**: SonarCloud + ESLint
+- **Orquestração**: AWS ECS / Terraform
+- **Testes**: Jest (93.87% de cobertura)
+- **Qualidade de Código**: SonarCloud + ESLint
 - **CI/CD**: GitHub Actions
-- **API Gateway**: Kong Gateway (separate infrastructure)
+- **API Gateway**: Kong Gateway (infraestrutura separada)
 
-### Architecture Diagram
+### Diagrama de Arquitetura
 
 ```mermaid
 graph TD
@@ -62,46 +62,46 @@ graph TD
     F[Load Balancer] --> A
 ```
 
-**Infrastructure Components:**
+**Componentes de Infraestrutura:**
 
-- **Container Orchestration**: AWS ECS with Fargate
-- **Database**: PostgreSQL (RDS)
-- **Auto Scaling**: CPU/Memory based
+- **Orquestração de Containers**: AWS ECS com Fargate
+- **Banco de Dados**: PostgreSQL (RDS)
+- **Auto Scaling**: Baseado em CPU/Memória
 - **Load Balancer**: Application Load Balancer (ALB)
-- **API Gateway**: Kong Gateway for routing
-- **CI/CD**: GitHub Actions with automated deployment
-- **Monitoring**: SonarCloud + CloudWatch
+- **API Gateway**: Kong Gateway para roteamento
+- **CI/CD**: GitHub Actions com deployment automatizado
+- **Monitoramento**: SonarCloud + CloudWatch
 
-### Domain Separation
+### Separação de Domínios
 
-#### 🏪 Store Domain
+#### 🏪 Domínio de Lojas
 
-- Store entity management
-- Authentication and authorization
-- Configuration management
-- Profile updates
-- Multi-tenancy support
+- Gestão de entidades de lojas
+- Autenticação e autorização
+- Gestão de configuração
+- Atualizações de perfil
+- Suporte a multi-tenancy
 
-## 📚 API Documentation
+## 📚 Documentação da API
 
-### 🏥 Health Endpoint
-
-```http
-GET /health                     # Health check
-```
-
-### 🏪 Store Endpoints
+### 🏥 Endpoint de Saúde
 
 ```http
-POST   /stores                  # Register new store
-GET    /stores                  # List all stores
-GET    /stores/:id              # Get store by ID
-PUT    /stores/:id              # Update store
-DELETE /stores/:id              # Delete store
-POST   /stores/login            # Store authentication
+GET /health                     # Verificação de saúde
 ```
 
-**Request Example (POST /stores)**:
+### 🏪 Endpoints de Lojas
+
+```http
+POST   /stores                  # Registrar nova loja
+GET    /stores                  # Listar todas as lojas
+GET    /stores/:id              # Buscar loja por ID
+PUT    /stores/:id              # Atualizar loja
+DELETE /stores/:id              # Deletar loja
+POST   /stores/login            # Autenticação de loja
+```
+
+**Exemplo de Requisição (POST /stores)**:
 
 ```json
 {
@@ -119,58 +119,58 @@ POST   /stores/login            # Store authentication
 }
 ```
 
-### ⚙️ Configuration Endpoints
+### ⚙️ Endpoints de Configuração
 
 ```http
-GET    /stores/:id/config       # Get store configuration
-PUT    /stores/:id/config       # Update configuration
+GET    /stores/:id/config       # Buscar configuração da loja
+PUT    /stores/:id/config       # Atualizar configuração
 ```
 
-### 📊 Analytics Endpoints
+### 📊 Endpoints de Análises
 
 ```http
-GET    /stores/:id/metrics      # Get store metrics
-GET    /stores/:id/status       # Get operational status
+GET    /stores/:id/metrics      # Buscar métricas da loja
+GET    /stores/:id/status       # Buscar status operacional
 ```
 
-### 🔐 Authentication
+### 🔐 Autenticação
 
-Store endpoints require authentication via:
+Endpoints de lojas requerem autenticação via:
 
-- **JWT Token**: After successful login
-- **API Key**: For service-to-service communication
+- **Token JWT**: Após login bem-sucedido
+- **Chave de API**: Para comunicação serviço a serviço
 
-## 🚀 Getting Started
+## 🚀 Primeiros Passos
 
-### Prerequisites
+### Pré-requisitos
 
 - **Node.js** 20-22
-- **Docker** and **Docker Compose**
+- **Docker** e **Docker Compose**
 - **PostgreSQL** 14+
 
-### Local Development
+### Desenvolvimento Local
 
-#### 1. Environment Setup
+#### 1. Configuração do Ambiente
 
 ```bash
-# Navigate to app folder
+# Navegar para a pasta app
 cd microservice-store/app
 
-# Install dependencies
+# Instalar dependências
 npm install
 
-# Configure environment variables
+# Configurar variáveis de ambiente
 cp env-example .env
 ```
 
-**Main Environment Variables**:
+**Principais Variáveis de Ambiente**:
 
 ```bash
-# Application
+# Aplicação
 NODE_ENV=development
 PORT=3000
 
-# Database
+# Banco de Dados
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=postgres
@@ -181,197 +181,193 @@ DB_NAME=store
 JWT_SECRET=your-secret-key
 JWT_EXPIRATION=3600
 
-# AWS (for production)
+# AWS (para produção)
 AWS_REGION=us-east-1
 ```
 
-#### 2. Start Services
+#### 2. Iniciar Serviços
 
 ```bash
-# Start database
+# Iniciar banco de dados
 docker-compose up -d
 
-# Start application
+# Iniciar aplicação
 npm run start:dev
 ```
 
-#### 3. Application Access
+#### 3. Acesso à Aplicação
 
 - **API**: [http://localhost:3000](http://localhost:3000)
 - **Health Check**: [http://localhost:3000/health](http://localhost:3000/health)
 
-## 🛠️ Development Commands
+## 🛠️ Comandos de Desenvolvimento
 
-### Installation
+### Instalação
 
 ```bash
 npm install
 ```
 
-### Execution
+### Execução
 
 ```bash
-# Development with hot-reload
+# Desenvolvimento com hot-reload
 npm run start:dev
 
-# Debug mode
+# Modo debug
 npm run start:debug
 
-# Production
+# Produção
 npm run build && npm run start:prod
 ```
 
-### Tests
+### Testes
 
 ```bash
-# Unit tests
+# Testes unitários
 npm test
 
-# Tests with coverage
+# Testes com cobertura
 npm run test:cov
 
-# Tests in watch mode
+# Testes em modo watch
 npm run test:watch
 ```
 
-### Code Quality
+### Qualidade de Código
 
 ```bash
 # ESLint
 npm run lint
 
-# Code formatting
+# Formatação de código
 npm run format
 ```
 
-## 🏗️ Clean Architecture Structure
+## 🏗️ Estrutura de Clean Architecture
 
 ```
 app/src/
-├── common/                    # Shared elements
-│   ├── DTOs/                 # Common DTOs
-│   ├── dataSource/           # Data access interfaces
-│   └── exceptions/           # Custom exceptions
-├── core/                     # 🎯 DOMAIN & APPLICATION LAYERS
-│   ├── domain/              # Business entities
-│   │   └── store/          # Store entity & repository
-│   └── application/         # Use cases
-│       └── store/          # Store use cases
-└── external/                # 🌐 INFRASTRUCTURE LAYER
-    ├── controllers/         # NestJS controllers
-    ├── database/           # TypeORM repositories
-    └── services/           # External services
+├── common/                    # Elementos compartilhados
+│   ├── DTOs/                 # DTOs comuns
+│   ├── dataSource/           # Interfaces de acesso a dados
+│   └── exceptions/           # Exceções customizadas
+├── core/                     # 🎯 CAMADAS DE DOMÍNIO E APLICAÇÃO
+│   ├── domain/              # Entidades de negócio
+│   │   └── store/          # Entidade e repositório de loja
+│   └── application/         # Casos de uso
+│       └── store/          # Casos de uso de lojas
+└── external/                # 🌐 CAMADA DE INFRAESTRUTURA
+    ├── controllers/         # Controllers NestJS
+    ├── database/           # Repositórios TypeORM
+    └── services/           # Serviços externos
 ```
 
-### Applied Principles
+### Princípios Aplicados
 
-- **🔄 Dependency Inversion**: Core doesn't depend on external details
-- **🧪 Testability**: Isolated and testable business rules
-- **🔌 Framework Independence**: Business logic decoupled from NestJS
-- **📱 UI Independence**: API can be consumed by any interface
-- **🗄️ Database Independence**: Repository pattern for persistence
+- **🔄 Inversão de Dependência**: Core não depende de detalhes externos
+- **🧪 Testabilidade**: Regras de negócio isoladas e testáveis
+- **🔌 Independência de Framework**: Lógica de negócio desacoplada do NestJS
+- **📱 Independência de UI**: API pode ser consumida por qualquer interface
+- **🗄️ Independência de Banco de Dados**: Padrão Repository para persistência
 
-## 🧪 Testing
+## 🧪 Testes
 
-### Test Coverage
+### Cobertura de Testes
 
-- **Total Coverage**: 93.87%
-- **Total Tests**: 90 (all passing)
-- **Domain Focus**: Store domain only
+- **Cobertura Total**: 93.87%
+- **Total de Testes**: 90 (todos passando)
+- **Foco de Domínio**: Domínio de lojas apenas
 
-**Test Types:**
+**Tipos de Teste:**
 
-- ✅ Unit Tests: Entities, use cases, and services
-- ✅ Integration Tests: Controllers and repositories
-- ✅ Mocked Dependencies: External services and database
+- ✅ Testes Unitários: Entidades, casos de uso e serviços
+- ✅ Testes de Integração: Controllers e repositórios
+- ✅ Dependências Mockadas: Serviços externos e banco de dados
 
-## 🔄 CI/CD Pipeline
+## 🔄 Pipeline de CI/CD
 
-### GitHub Actions Workflows
+### Workflows do GitHub Actions
 
-#### 1. CI Workflow (.github/workflows/ci.yml)
+#### 1. Workflow de CI (.github/workflows/ci.yml)
 
-**Triggers**:
+**Gatilhos**:
 
-- Pull requests to `main` and `development`
-- Push to `main` and `development`
+- Pull requests para `main` e `development`
+- Push para `main` e `development`
 
 **Jobs**:
 
-1. **test**: Run all tests with coverage
-2. **sonarqube**: Quality analysis (needs: test)
+1. **test**: Executa todos os testes com cobertura
+2. **sonarqube**: Análise de qualidade (needs: test)
 
-**Features**:
+**Funcionalidades**:
 
 - ✅ Node.js 20.x
-- ✅ Automated tests
-- ✅ Coverage report (>80% threshold)
-- ✅ SonarCloud integration
-- ✅ ESLint validation
+- ✅ Testes automatizados
+- ✅ Relatório de cobertura (limite de 80%)
+- ✅ Integração com SonarCloud
+- ✅ Validação ESLint
 
-#### 2. Deploy Workflow (.github/workflows/deploy.yml)
+#### 2. Workflow de Deploy (.github/workflows/deploy.yml)
 
-**Triggers**:
+**Gatilhos**:
 
-- Push to `main` (after CI passes)
-- Manual dispatch
+- Push para `main` (após CI passar)
+- Despacho manual
 
-**Features**:
+**Funcionalidades**:
 
-- ✅ Build Docker image
-- ✅ Push to Amazon ECR
-- ✅ Deploy to AWS ECS
-- ✅ Health check validation
+- ✅ Build de imagem Docker
+- ✅ Push para Amazon ECR
+- ✅ Deploy no AWS ECS
+- ✅ Validação de health check
 
-## ☸️ Deployment
+## ☸️ Deploy
 
-### Terraform Infrastructure
+### Infraestrutura Terraform
 
-The microservice has infrastructure as code with Terraform:
+O microserviço possui infraestrutura como código com Terraform:
 
 ```bash
 cd infra
 
-# Initialize Terraform
+# Inicializar Terraform
 terraform init
 
-# Plan deployment
+# Planejar deploy
 terraform plan
 
-# Apply infrastructure
+# Aplicar infraestrutura
 terraform apply
 ```
 
-**Created Components**:
+**Componentes Criados**:
 
-- ECS Task Definition and Service
-- PostgreSQL RDS instance
+- Task Definition e Service do ECS
+- Instância PostgreSQL RDS
 - Security Groups
 - IAM Roles
 - CloudWatch Logs
 
-For more details see [infra/README.md](./infra/README.md)
+Para mais detalhes veja [infra/README.md](./infra/README.md)
 
-## 📊 Monitoring and Observability
+## 📊 Monitoramento e Observabilidade
 
 ### SonarCloud
 
-- **Organization**: fiap-tech-challange
-- **Quality Gate**: Coverage > 80%, No bugs, No vulnerabilities
+- **Organização**: fiap-tech-challange
+- **Quality Gate**: Cobertura > 80%, Sem bugs, Sem vulnerabilidades
 
 ### CloudWatch (AWS)
 
-- **Logs**: ECS task logs
-- **Metrics**: CPU, Memory, Request count
-- **Alarms**: Auto-scaling triggers
+- **Logs**: Logs de tarefas do ECS
+- **Métricas**: CPU, Memória, Contagem de requisições
+- **Alarmes**: Gatilhos de auto-scaling
 
-## 🔗 Related Repositories
+## 🔗 Repositórios Relacionados
 
 - **API Gateway**: [infra-gw-terraform](../infra-gw-terraform/)
-- **Customer-Payment Service**: [microservice-customer](../microservice-customer/)
-- **Products Service**: [microservice-products](../microservice-products/)
-- **Notification Service**: [microservice-notification](../microservice-notification/)
-
-## 📝 License
-
-This project is part of the FIAP Tech Challenge program.
+- **Serviço Customer-Payment**: [microservice-customer](../microservice-customer/)
+- **Serviço de Produtos**: [microservice-products](../microservice-products/)
+- **Serviço de Notificações**: [microservice-notification](../microservice-notification/)
