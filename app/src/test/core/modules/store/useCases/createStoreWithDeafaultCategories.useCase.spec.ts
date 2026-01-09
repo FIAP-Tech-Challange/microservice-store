@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { CreateStoreWithDefaultCategoriesUseCase } from 'src/core/modules/store/useCases/createStoreWithDeafaultCategories.useCase';
 import { StoreGateway } from 'src/core/modules/store/gateways/store.gateway';
 import { ProductCategoryGateway } from 'src/core/modules/store/gateways/productCategory.gateway';
@@ -79,7 +80,8 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
       expect(result.value).toBeInstanceOf(Store);
       expect(result.value!.name).toBe(dto.name);
       expect(result.value!.fantasyName).toBe(dto.fantasyName);
-      expect(storeGateway.saveStore).toHaveBeenCalled();
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalled();
     });
 
     it('should create all four default categories', async () => {
@@ -125,19 +127,20 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
 
       // Then
       expect(createCategorySpy).toHaveBeenCalledTimes(4);
-      expect(createCategorySpy).toHaveBeenCalledWith(
+      const createCategorySpyCall = createCategorySpy;
+      expect(createCategorySpyCall).toHaveBeenCalledWith(
         result.value!.id,
         'Lanche',
       );
-      expect(createCategorySpy).toHaveBeenCalledWith(
+      expect(createCategorySpyCall).toHaveBeenCalledWith(
         result.value!.id,
         'Acompanhamento',
       );
-      expect(createCategorySpy).toHaveBeenCalledWith(
+      expect(createCategorySpyCall).toHaveBeenCalledWith(
         result.value!.id,
         'Bebida',
       );
-      expect(createCategorySpy).toHaveBeenCalledWith(
+      expect(createCategorySpyCall).toHaveBeenCalledWith(
         result.value!.id,
         'Sobremesa',
       );
@@ -160,8 +163,10 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
       // Then
       expect(result.error).toBeDefined();
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
-      expect(categoryGateway.create).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
+      const createCategorySpy = categoryGateway.create;
+      expect(createCategorySpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when CNPJ is invalid', async () => {
@@ -181,8 +186,10 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
       // Then
       expect(result.error).toBeDefined();
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
-      expect(categoryGateway.create).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
+      const createCategorySpy = categoryGateway.create;
+      expect(createCategorySpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when phone is invalid', async () => {
@@ -202,8 +209,10 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
       // Then
       expect(result.error).toBeDefined();
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
-      expect(categoryGateway.create).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
+      const createCategorySpy = categoryGateway.create;
+      expect(createCategorySpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when store with email already exists', async () => {
@@ -238,8 +247,10 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
       expect(result.error).toBeInstanceOf(ResourceConflictException);
       expect(result.error!.message).toContain('email already exists');
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
-      expect(categoryGateway.create).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
+      const createCategorySpy = categoryGateway.create;
+      expect(createCategorySpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when store with CNPJ already exists', async () => {
@@ -279,8 +290,10 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
       expect(result.error).toBeInstanceOf(ResourceConflictException);
       expect(result.error!.message).toContain('CNPJ already exists');
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
-      expect(categoryGateway.create).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
+      const createCategorySpy = categoryGateway.create;
+      expect(createCategorySpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when store with name already exists', async () => {
@@ -331,8 +344,10 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
       expect(result.error).toBeInstanceOf(ResourceConflictException);
       expect(result.error!.message).toContain('name already exists');
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
-      expect(categoryGateway.create).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
+      const createCategorySpy = categoryGateway.create;
+      expect(createCategorySpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when saveStore fails', async () => {
@@ -374,7 +389,8 @@ describe('CreateStoreWithDefaultCategoriesUseCase', () => {
       // Then
       expect(result.error).toBe(saveError);
       expect(result.value).toBeUndefined();
-      expect(categoryGateway.create).toHaveBeenCalledTimes(0);
+      const createCategorySpy = categoryGateway.create;
+      expect(createCategorySpy).toHaveBeenCalledTimes(0);
     });
   });
 });

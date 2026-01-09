@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { FindStoreByIdUseCase } from 'src/core/modules/store/useCases/findStoreById.useCase';
 import { StoreGateway } from 'src/core/modules/store/gateways/store.gateway';
 import { Store } from 'src/core/modules/store/entities/store.entity';
@@ -51,8 +52,9 @@ describe('FindStoreByIdUseCase', () => {
       expect(result.error).toBeUndefined();
       expect(result.value).toBeDefined();
       expect(result.value).toBe(store);
-      expect(storeGateway.findStoreById).toHaveBeenCalledTimes(1);
-      expect(storeGateway.findStoreById).toHaveBeenCalledWith(store.id);
+      const findStoreByIdSpy = storeGateway.findStoreById;
+      expect(findStoreByIdSpy).toHaveBeenCalledTimes(1);
+      expect(findStoreByIdSpy).toHaveBeenCalledWith(store.id);
     });
 
     it('should return error when store is not found', async () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { FindStoreByEmailUseCase } from 'src/core/modules/store/useCases/findStoreByEmail.useCase';
 import { StoreGateway } from 'src/core/modules/store/gateways/store.gateway';
 import { Store } from 'src/core/modules/store/entities/store.entity';
@@ -51,8 +52,9 @@ describe('FindStoreByEmailUseCase', () => {
       expect(result.error).toBeUndefined();
       expect(result.value).toBeDefined();
       expect(result.value).toBe(store);
-      expect(storeGateway.findStoreByEmail).toHaveBeenCalledTimes(1);
-      expect(storeGateway.findStoreByEmail).toHaveBeenCalledWith(validEmail);
+      const findStoreByEmailSpy = storeGateway.findStoreByEmail;
+      expect(findStoreByEmailSpy).toHaveBeenCalledTimes(1);
+      expect(findStoreByEmailSpy).toHaveBeenCalledWith(validEmail);
     });
 
     it('should return error when email is invalid', async () => {
@@ -65,7 +67,8 @@ describe('FindStoreByEmailUseCase', () => {
       // Then
       expect(result.error).toBeDefined();
       expect(result.value).toBeUndefined();
-      expect(storeGateway.findStoreByEmail).toHaveBeenCalledTimes(0);
+      const findStoreByEmailSpy = storeGateway.findStoreByEmail;
+      expect(findStoreByEmailSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when store is not found', async () => {

@@ -20,13 +20,18 @@ async function bootstrap() {
           const result: Record<string, any> = {};
 
           errors.forEach((error) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (error.constraints) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               result[error.property] = Object.values(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 error.constraints as { [key: string]: string },
               ).join(', ');
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (Array.isArray(error.children) && error.children.length > 0) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               result[error.property] = formatErrors(error.children as any[]);
             }
           });

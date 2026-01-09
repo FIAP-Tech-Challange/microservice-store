@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { ValidateStorePasswordUseCase } from 'src/core/modules/store/useCases/validateStorePassword.useCase';
 import { FindStoreByEmailUseCase } from 'src/core/modules/store/useCases/findStoreByEmail.useCase';
 import { StoreGateway } from 'src/core/modules/store/gateways/store.gateway';
@@ -126,7 +127,8 @@ describe('ValidateStorePasswordUseCase', () => {
       // Then
       expect(result.error).toBeDefined();
       expect(result.value).toBeUndefined();
-      expect(storeGateway.findStoreByEmail).toHaveBeenCalledTimes(0);
+      const findStoreByEmailSpy = storeGateway.findStoreByEmail;
+      expect(findStoreByEmailSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when findStoreByEmail fails', async () => {
