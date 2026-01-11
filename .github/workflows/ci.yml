@@ -195,8 +195,7 @@ jobs:
             -var="ecr_image_uri=${{ needs.build-and-push-image.outputs.ecr_image_uri }}" \
             -var="categoryPathParameterName=${{ secrets.CATEGORY_PATH_PARAMETER_NAME }}" \
             -var="categoryApiKeySecretName=${{ secrets.CATEGORY_API_KEY_SECRET_NAME }}" \
-            -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}" \
-            -var="jwtAccessTokenExpirationTime=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}"
+            -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}"
 
       - name: Terraform Apply
         run: |
@@ -205,5 +204,4 @@ jobs:
             -var="ecr_image_uri=${{ needs.build-and-push-image.outputs.ecr_image_uri }}" \
             -var="categoryPathParameterName=${{ secrets.CATEGORY_PATH_PARAMETER_NAME }}" \
             -var="categoryApiKeySecretName=${{ secrets.CATEGORY_API_KEY_SECRET_NAME }}" \
-            -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}" \
-            -var="jwtAccessTokenExpirationTime=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}"
+            -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}"
