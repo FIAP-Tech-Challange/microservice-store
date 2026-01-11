@@ -1,9 +1,9 @@
 name: "Store Microservice CI/CD Pipeline"
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main, development]
 
 jobs:
   test:
@@ -133,7 +133,7 @@ jobs:
         id: tags
         run: |
           COMMIT_HASH=${{ github.sha }}
-          ECR_URL=${{ secrets.ECR_REPOSITORY_URI }}
+          ECR_URL=${{ var.ECR_REPOSITORY_URI }}
           TAGS="${ECR_URL}:${COMMIT_HASH}"
 
           echo "image_tags=$TAGS" >> $GITHUB_OUTPUT
@@ -193,8 +193,6 @@ jobs:
           terraform plan -no-color \
             -var="environment=production" \
             -var="ecr_image_uri=${{ needs.build-and-push-image.outputs.ecr_image_uri }}" \
-            -var="store_table_name=${{ secrets.DYNAMODB_TABLE_NAME }}" \
-            -var="api_key_secret_name=${{ secrets.API_KEY_SECRET_NAME }}" \
             -var="categoryPathParameterName=${{ secrets.CATEGORY_PATH_PARAMETER_NAME }}" \
             -var="categoryApiKeySecretName=${{ secrets.CATEGORY_API_KEY_SECRET_NAME }}" \
             -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}" \
@@ -205,8 +203,6 @@ jobs:
           terraform apply -auto-approve \
             -var="environment=production" \
             -var="ecr_image_uri=${{ needs.build-and-push-image.outputs.ecr_image_uri }}" \
-            -var="store_table_name=${{ secrets.DYNAMODB_TABLE_NAME }}" \
-            -var="api_key_secret_name=${{ secrets.API_KEY_SECRET_NAME }}" \
             -var="categoryPathParameterName=${{ secrets.CATEGORY_PATH_PARAMETER_NAME }}" \
             -var="categoryApiKeySecretName=${{ secrets.CATEGORY_API_KEY_SECRET_NAME }}" \
             -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}" \
