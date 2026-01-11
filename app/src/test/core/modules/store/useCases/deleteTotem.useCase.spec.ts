@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { DeleteTotemUseCase } from 'src/core/modules/store/useCases/deleteTotem.useCase';
 import { FindStoreByIdUseCase } from 'src/core/modules/store/useCases/findStoreById.useCase';
 import { StoreGateway } from 'src/core/modules/store/gateways/store.gateway';
@@ -66,7 +67,8 @@ describe('DeleteTotemUseCase', () => {
       // Then
       expect(result.error).toBeUndefined();
       expect(store.getTotems()).toHaveLength(0);
-      expect(storeGateway.saveStore).toHaveBeenCalledWith(store);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledWith(store);
     });
 
     it('should return error when store is not found', async () => {
@@ -85,7 +87,8 @@ describe('DeleteTotemUseCase', () => {
       // Then
       expect(result.error).toBeInstanceOf(ResourceNotFoundException);
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when totem is not found', async () => {
@@ -116,7 +119,8 @@ describe('DeleteTotemUseCase', () => {
       expect(result.error).toBeInstanceOf(ResourceInvalidException);
       expect(result.error!.message).toContain('Totem not found');
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should save store after successful deletion', async () => {

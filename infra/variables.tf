@@ -17,19 +17,19 @@ variable "ecr_image_uri" {
 variable "store_table_name" {
   description = "The name of the DynamoDB table for store."
   type        = string
-  default     = "Store"
+  default     = "StoreTable"
 }
 
 variable "api_key_secret_name" {
   description = "The name of the API key secret in AWS Secrets Manager"
   type        = string
-  default     = "store_api_key"
+  default     = "/microservice/stores/api_key"
 }
 
 variable "load_balancer_parameter_name" {
   description = "The parameter name for the load balancer url"
   type        = string
-  default     = "/store/load_balancer_url"
+  default     = "/microservice/stores/lb_url"
 }
 
 variable "port" {

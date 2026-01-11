@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { FindStoreByTotemAccessTokenUseCase } from 'src/core/modules/store/useCases/findStoreByTotemAccessToken.useCase';
 import { StoreGateway } from 'src/core/modules/store/gateways/store.gateway';
 import { Store } from 'src/core/modules/store/entities/store.entity';
@@ -61,8 +62,10 @@ describe('FindStoreByTotemAccessTokenUseCase', () => {
       expect(result.error).toBeUndefined();
       expect(result.value).toBeDefined();
       expect(result.value).toBe(store);
-      expect(storeGateway.findStoreByTotemAccessToken).toHaveBeenCalledTimes(1);
-      expect(storeGateway.findStoreByTotemAccessToken).toHaveBeenCalledWith(
+      const findStoreByTotemAccessTokenSpy =
+        storeGateway.findStoreByTotemAccessToken;
+      expect(findStoreByTotemAccessTokenSpy).toHaveBeenCalledTimes(1);
+      expect(findStoreByTotemAccessTokenSpy).toHaveBeenCalledWith(
         totem.tokenAccess,
       );
     });

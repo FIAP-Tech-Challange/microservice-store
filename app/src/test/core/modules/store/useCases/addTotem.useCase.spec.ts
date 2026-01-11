@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { AddTotemUseCase } from 'src/core/modules/store/useCases/addTotem.useCase';
 import { FindStoreByIdUseCase } from 'src/core/modules/store/useCases/findStoreById.useCase';
 import { StoreGateway } from 'src/core/modules/store/gateways/store.gateway';
@@ -69,7 +70,8 @@ describe('AddTotemUseCase', () => {
       expect(result.value!.storeId).toBe(dto.storeId);
       expect(result.value!.id).toBeDefined();
       expect(result.value!.tokenAccess).toBeDefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledWith(
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledWith(
         expect.objectContaining({ id: store.id }),
       );
     });
@@ -92,7 +94,8 @@ describe('AddTotemUseCase', () => {
       // Then
       expect(result.error).toBeInstanceOf(ResourceNotFoundException);
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when totem name is empty', async () => {
@@ -122,7 +125,8 @@ describe('AddTotemUseCase', () => {
       // Then
       expect(result.error).toBeDefined();
       expect(result.value).toBeUndefined();
-      expect(storeGateway.saveStore).toHaveBeenCalledTimes(0);
+      const saveStoreSpy = storeGateway.saveStore;
+      expect(saveStoreSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should return error when totem with same name already exists', async () => {

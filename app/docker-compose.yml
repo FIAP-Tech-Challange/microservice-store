@@ -1,28 +1,36 @@
+name: microservice-store
+
 services:
   dynamodb-local:
     image: amazon/dynamodb-local:latest
-    container_name: dynamodb-local
+    container_name: dynamodb-local-store
     ports:
-      - '8000:8000'
+      - '8001:8000'
     command: '-jar DynamoDBLocal.jar -sharedDb'
+    healthcheck:
+      test: ['CMD-SHELL', 'timeout 2 sh -c "echo > /dev/tcp/127.0.0.1/8000"']
+      interval: 3s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
     networks:
       - store-network
 
   dynamodb-init:
     image: amazon/aws-cli:latest
-    container_name: dynamodb-init
+    container_name: dynamodb-init-store
     volumes:
       - ./scripts/init-dynamodb.sh:/init-dynamodb.sh
     environment:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=us-east-1
-      - AWS_REGION=us-east-1
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
       - DYNAMODB_TABLE_NAME=${DYNAMODB_TABLE_NAME}
     entrypoint: ['/bin/sh', '/init-dynamodb.sh']
     depends_on:
-      - dynamodb-local
+      dynamodb-local:
+        condition: service_healthy
     networks:
       - store-network
 
@@ -30,10 +38,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: development
+      target: production
     container_name: microservice-store
     ports:
-      - '${APP_PORT:-3000}:3000'
+      - '${PORT}:${PORT}'
     volumes:
       - ./src:/app/src
       - ./test:/app/test
@@ -41,21 +49,11 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=development
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
-      - DYNAMODB_TABLE_NAME=${DYNAMODB_TABLE_NAME}
-
-      - JWT_SECRET_NAME=${JWT_SECRET_NAME}
-      - JWT_ACCESS_TOKEN_EXPIRATION_TIME=${JWT_ACCESS_TOKEN_EXPIRATION_TIME}
-
-      - API_KEY_SECRET_NAME=${API_KEY_SECRET_NAME}
-      - CATEGORY_PATH_PARAMETER_NAME=${CATEGORY_PATH_PARAMETER_NAME}
-      - CATEGORY_API_KEY_SECRET_NAME=${CATEGORY_API_KEY_SECRET_NAME}
-
-      - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
-      - AWS_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
+      - NODE_ENV=development
     depends_on:
       dynamodb-init:
         condition: service_completed_successfully
