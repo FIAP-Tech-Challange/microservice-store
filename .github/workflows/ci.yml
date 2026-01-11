@@ -193,15 +193,15 @@ jobs:
           terraform plan -no-color \
             -var="environment=production" \
             -var="ecr_image_uri=${{ needs.build-and-push-image.outputs.ecr_image_uri }}" \
-            -var="categoryPathParameterName=${{ secrets.CATEGORY_PATH_PARAMETER_NAME }}" \
-            -var="categoryApiKeySecretName=${{ secrets.CATEGORY_API_KEY_SECRET_NAME }}" \
-            -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}"
+            -var="categoryPathParameterName=${{ vars.CATEGORY_PATH_PARAMETER_NAME }}" \
+            -var="categoryApiKeySecretName=${{ vars.CATEGORY_API_KEY_SECRET_NAME }}" \
+            -var="jwtSecretName=${{ vars.JWT_SECRET_NAME }}"
 
       - name: Terraform Apply
         run: |
           terraform apply -auto-approve \
             -var="environment=production" \
             -var="ecr_image_uri=${{ needs.build-and-push-image.outputs.ecr_image_uri }}" \
-            -var="categoryPathParameterName=${{ secrets.CATEGORY_PATH_PARAMETER_NAME }}" \
-            -var="categoryApiKeySecretName=${{ secrets.CATEGORY_API_KEY_SECRET_NAME }}" \
-            -var="jwtSecretName=${{ secrets.JWT_SECRET_NAME }}"
+            -var="categoryPathParameterName=${{ vars.CATEGORY_PATH_PARAMETER_NAME }}" \
+            -var="categoryApiKeySecretName=${{ vars.CATEGORY_API_KEY_SECRET_NAME }}" \
+            -var="jwtSecretName=${{ vars.JWT_SECRET_NAME }}"
