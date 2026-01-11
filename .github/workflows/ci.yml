@@ -133,7 +133,7 @@ jobs:
         id: tags
         run: |
           COMMIT_HASH=${{ github.sha }}
-          ECR_URL=${{ var.ECR_REPOSITORY_URI }}
+          ECR_URL=${{ vars.ECR_REPOSITORY_URI }}
           TAGS="${ECR_URL}:${COMMIT_HASH}"
 
           echo "image_tags=$TAGS" >> $GITHUB_OUTPUT
