@@ -1,0 +1,14 @@
+_format_version: "3.0"
+
+services:
+  - name: store-service
+    url: http://placeholder_lb_url/
+    tags:
+      - store
+    routes:
+      - name: store-routes
+        paths:
+          - /v1/store
+        strip_path: false
+        tags:
+          - store
