@@ -2,7 +2,7 @@ _format_version: "3.0"
 
 services:
   - name: store-service
-    url: http://placeholder_lb_url/
+    url: http://PLACEHOLDER_LB_URL/
     tags:
       - store
     routes:
