@@ -1,0 +1,14 @@
+_format_version: "3.0"
+
+services:
+  - name: store-service
+    url: http://PLACEHOLDER_LB_URL/
+    tags:
+      - store
+    routes:
+      - name: store-routes
+        paths:
+          - /v1/store
+        strip_path: true
+        tags:
+          - store

@@ -30,7 +30,7 @@ export class ProductCategoryHTTPDataSource
     const serviceUrl = await this.getParameter(categoryPathParameterName);
     const apiKey = await this.getSecretValue(categoryApiKeySecretName);
 
-    await fetch(`${serviceUrl}/categories`, {
+    await fetch(`http://${serviceUrl}/categories`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
