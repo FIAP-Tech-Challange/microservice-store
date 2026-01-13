@@ -1,6 +1,6 @@
 output "load_balancer_url" {
   description = "URL of the Application Load Balancer"
-  value       = "http://${aws_lb.store_alb.dns_name}"
+  value       = aws_lb.store_alb.dns_name
 }
 
 output "ecs_cluster_name" {
