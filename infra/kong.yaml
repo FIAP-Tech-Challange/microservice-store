@@ -9,6 +9,6 @@ services:
       - name: store-routes
         paths:
           - /v1/store
-        strip_path: false
+        strip_path: true
         tags:
           - store
